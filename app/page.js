@@ -1,103 +1,155 @@
-import Image from "next/image";
+'use client';
+import React, { useState } from 'react';
+import BraceletPreview from './BraceletPreview/page';
+import ComponentSelector from './ComponentSelector/page';
 
-export default function Home() {
+const HALF_BRACELET_OPTIONS = [
+  { id: 'none', name: 'None', image: '/half-bracelets/none.png' },
+  { id: 'pearls', name: 'Pearls', image: '/half-bracelets/pearls.png' },
+  { id: 'amethyst', name: 'Amethyst', image: '/half-bracelets/amethyst.png' },
+  { id: 'beads', name: 'Beads', image: '/half-bracelets/beads.png' },
+  { id: 'knotted', name: 'Knotted', image: '/half-bracelets/knotted.png' },
+  { id: 'chain', name: 'Chain', image: '/half-bracelets/chain.png' },
+];
+
+const FILLER_OPTIONS = [
+  { id: 'filler1', image: '/fillers/filler1.png' },
+  { id: 'filler2', image: '/fillers/filler2.png' },
+];
+
+const BraceletDesigner = () => {
+  const [step, setStep] = useState(1);
+  const [stringType, setStringType] = useState('silver');
+  const [claspType, setClaspType] = useState('default');
+  const [chainLength, setChainLength] = useState(3);
+  const [endCharm, setEndCharm] = useState('heart');
+  const [selectedCharm, setSelectedCharm] = useState(null);
+  const [placedCharms, setPlacedCharms] = useState(
+    Array(14).fill(null).map(() => ({ type: null, variant: null }))
+  );
+  const [selectedHalfBracelet, setSelectedHalfBracelet] = useState(null);
+  const [charmVariants, setCharmVariants] = useState({ circle: 'circle1' });
+  const [selectedFiller, setSelectedFiller] = useState('filler1');
+
+  const handleVariantSelect = (charmType, variant) => {
+    setCharmVariants((prev) => ({
+      ...prev,
+      [charmType]: variant,
+    }));
+  };
+
+  const handlePositionSelect = (position) => {
+    if (!selectedCharm) return;
+    if (selectedHalfBracelet && position >= 7) return;
+    setPlacedCharms(prev => {
+      const newPlacedCharms = [...prev];
+      newPlacedCharms[position] = { 
+        type: selectedCharm,
+        variant: charmVariants[selectedCharm] || null
+      };
+      return newPlacedCharms;
+    });
+  };
+
+  const toggleHalfBracelet = (type) => {
+    if (type === 'none') {
+      setSelectedHalfBracelet(null); // Clear selection
+    } else if (selectedHalfBracelet === type) {
+      setSelectedHalfBracelet(null); // Toggle off
+    } else {
+      setSelectedHalfBracelet(type); // Select new type
+      // Clear charms from positions 7 and beyond
+      setPlacedCharms(prev => {
+        const newPlacedCharms = [...prev];
+        for (let i = 7; i < newPlacedCharms.length; i++) {
+          newPlacedCharms[i] = { type: null, variant: null };
+        }
+        return newPlacedCharms;
+      });
+    }
+  };
+
+  const handleNextStep = () => {
+    if (step < 4) setStep(step + 1);
+  };
+
+  const handlePrevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const removeCharm = (position) => {
+    setPlacedCharms(prev => {
+      const newPlacedCharms = [...prev];
+      newPlacedCharms[position] = { type: null, variant: null };
+      return newPlacedCharms;
+    });
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gray-50 flex flex-col text-black">
+      <div className="flex-1 flex flex-col md:flex-row p-8">
+        <div className="md:w-1/2 flex items-center justify-center">
+          <BraceletPreview
+            stringType={stringType}
+            claspType={claspType}
+            chainLength={chainLength}
+            endCharm={endCharm}
+            placedCharms={placedCharms}
+            selectedCharm={selectedCharm}
+            onPositionSelect={handlePositionSelect}
+            selectedHalfBracelet={selectedHalfBracelet}
+            charmVariants={charmVariants}
+            onRemoveCharm={removeCharm}
+            halfBraceletOptions={HALF_BRACELET_OPTIONS}
+            step={step}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div className="md:w-1/2 p-8 mt-10">
+          <h2 className="text-5xl font-serif mb-2">Customize</h2>
+          <p className="text-lg mb-6">
+            Step {step}: {step === 1 ? 'Choose your string and clasp' : step === 2 ? 'Add charms' : step === 3 ? 'Select half bracelet' : 'Confirm & Checkout'}
+          </p>
+          <ComponentSelector
+            step={step}
+            setStep={setStep}
+            stringType={stringType}
+            setStringType={setStringType}
+            claspType={claspType}
+            setClaspType={setClaspType}
+            chainLength={chainLength}
+            setChainLength={setChainLength}
+            endCharm={endCharm}
+            setEndCharm={setEndCharm}
+            selectedCharm={selectedCharm}
+            setSelectedCharm={setSelectedCharm}
+            halfBraceletOptions={HALF_BRACELET_OPTIONS}
+            selectedHalfBracelet={selectedHalfBracelet}
+            toggleHalfBracelet={toggleHalfBracelet}
+            charmVariants={charmVariants}
+            setCharmVariants={setCharmVariants}
+            handleVariantSelect={handleVariantSelect}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+      </div>
+      <div className="flex justify-center space-x-4 p-4">
+        <button className={`text-sm ${step === 1 ? 'font-bold' : ''}`} onClick={() => { setStep(1); setSelectedCharm(null); }}>
+          Step 1: Choose string & clasp
+        </button>
+        <span>→</span>
+        <button className={`text-sm ${step === 2 ? 'font-bold' : ''}`} onClick={() => { setStep(2); setSelectedCharm(null); }}>
+          Step 2: Add charms
+        </button>
+        <span>→</span>
+        <button className={`text-sm ${step === 3 ? 'font-bold' : ''}`} onClick={() => { setStep(3); setSelectedCharm(null); }}>
+          Step 3: Select half bracelet
+        </button>
+        <span>→</span>
+        <button className={`text-sm ${step === 4 ? 'font-bold' : ''}`} onClick={() => setStep(4)}>
+          Step 4: Confirm & Checkout
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default BraceletDesigner;
