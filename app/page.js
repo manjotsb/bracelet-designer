@@ -4,12 +4,12 @@ import BraceletPreview from './BraceletPreview/page';
 import ComponentSelector from './ComponentSelector/page';
 
 const HALF_BRACELET_OPTIONS = [
-  { id: 'none', name: 'None', image: '/half-bracelets/none.png' },
-  { id: 'pearls', name: 'Pearls', image: '/half-bracelets/pearls.png' },
-  { id: 'amethyst', name: 'Amethyst', image: '/half-bracelets/amethyst.png' },
-  { id: 'beads', name: 'Beads', image: '/half-bracelets/beads.png' },
-  { id: 'knotted', name: 'Knotted', image: '/half-bracelets/knotted.png' },
-  { id: 'chain', name: 'Chain', image: '/half-bracelets/chain.png' },
+  { id: 'none', name: 'None', image: '/half-bracelets/none.png', price:0 },
+  { id: 'pearls', name: 'Pearls', image: '/half-bracelets/pearls.png', price:50  },
+  { id: 'amethyst', name: 'Amethyst', image: '/half-bracelets/amethyst.png', price:66  },
+  { id: 'beads', name: 'Beads', image: '/half-bracelets/beads.png', price:21  },
+  { id: 'knotted', name: 'Knotted', image: '/half-bracelets/knotted.png', price:5  },
+  { id: 'chain', name: 'Chain', image: '/half-bracelets/chain.png', price:10  },
 ];
 
 const FILLER_OPTIONS = [
@@ -19,6 +19,14 @@ const FILLER_OPTIONS = [
 
 const BraceletDesigner = () => {
   const [step, setStep] = useState(1);
+  const stepNames = {
+    1: "String & Clasp",
+    2: "Charms",
+    3: "Half Bracelet",
+    4: "Select Tassel",
+    5: "Review"
+  };
+  
   const [stringType, setStringType] = useState('silver');
   const [claspType, setClaspType] = useState('default');
   const [chainLength, setChainLength] = useState(3);
@@ -30,6 +38,16 @@ const BraceletDesigner = () => {
   const [selectedHalfBracelet, setSelectedHalfBracelet] = useState(null);
   const [charmVariants, setCharmVariants] = useState({ circle: 'circle1' });
   const [selectedFiller, setSelectedFiller] = useState('filler1');
+
+  const [selectedTassel, setSelectedTassel] = useState(null); // 1-4 or null
+
+  // Add tassel selector UI somewhere in your component
+  const TASSEL_OPTIONS = [
+    { id: 'heart', name: 'Heart Tassel', image: '/tassel/heart.png' },
+    { id: 'locket', name: 'Locket Tassel', image: '/tassel/locket.png' },
+    { id: 'pearl', name: 'Pearl Tassel', image: '/tassel/pearl.png' },
+    { id: 'plain', name: 'Plain Tassel', image: '/tassel/plain.png' },
+  ];
 
   const handleVariantSelect = (charmType, variant) => {
     setCharmVariants((prev) => ({
@@ -102,10 +120,14 @@ const BraceletDesigner = () => {
             onRemoveCharm={removeCharm}
             halfBraceletOptions={HALF_BRACELET_OPTIONS}
             step={step}
+            selectedTassel={selectedTassel}
           />
         </div>
         <div className="md:w-1/2 p-8 mt-10">
+        <div className='flex items-center justify-between'>
           <h2 className="text-5xl font-serif mb-2">Customize</h2>
+          <h2 className="text-xl font-serif mb-2">Total Price: ${60}</h2>
+        </div>
           <p className="text-lg mb-6">
             Step {step}: {step === 1 ? 'Choose your string and clasp' : step === 2 ? 'Add charms' : step === 3 ? 'Select half bracelet' : 'Confirm & Checkout'}
           </p>
@@ -128,25 +150,25 @@ const BraceletDesigner = () => {
             charmVariants={charmVariants}
             setCharmVariants={setCharmVariants}
             handleVariantSelect={handleVariantSelect}
+            selectedTassel={selectedTassel}
+            setSelectedTassel={setSelectedTassel}
+            tasselOptions={TASSEL_OPTIONS}
           />
         </div>
       </div>
       <div className="flex justify-center space-x-4 p-4">
-        <button className={`text-sm ${step === 1 ? 'font-bold' : ''}`} onClick={() => { setStep(1); setSelectedCharm(null); }}>
-          Step 1: Choose string & clasp
-        </button>
-        <span>→</span>
-        <button className={`text-sm ${step === 2 ? 'font-bold' : ''}`} onClick={() => { setStep(2); setSelectedCharm(null); }}>
-          Step 2: Add charms
-        </button>
-        <span>→</span>
-        <button className={`text-sm ${step === 3 ? 'font-bold' : ''}`} onClick={() => { setStep(3); setSelectedCharm(null); }}>
-          Step 3: Select half bracelet
-        </button>
-        <span>→</span>
-        <button className={`text-sm ${step === 4 ? 'font-bold' : ''}`} onClick={() => setStep(4)}>
-          Step 4: Confirm & Checkout
-        </button>
+        {[1, 2, 3, 4, 5].map((stepNumber) => (
+          <button
+            key={stepNumber}
+            className={`text-sm ${step === stepNumber ? 'font-bold underline' : ''}`}
+            onClick={() => {
+              setStep(stepNumber);
+              setSelectedCharm(null);
+            }}
+          >
+            Step {stepNumber}: {stepNames[stepNumber]}
+          </button>
+        ))}
       </div>
     </div>
   );

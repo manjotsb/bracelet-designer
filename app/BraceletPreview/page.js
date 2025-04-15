@@ -5,6 +5,7 @@ import { CHARM_TYPES } from '../ComponentSelector/page';
 const BraceletPreview = ({
   stringType,
   claspType,
+  selectedTassel,
   placedCharms,
   selectedCharm,
   onPositionSelect,
@@ -19,6 +20,18 @@ const BraceletPreview = ({
     return stringType === 'with-clasp'
       ? '/bracelet/bracelet-with-clasp.png'
       : '/bracelet/bracelet-no-clasp.png';
+  };
+
+  const getTasselImage = () => {
+    if (!selectedTassel || stringType !== 'with-clasp') return null;
+    return `/tassel/${selectedTassel}.png`; // Assuming naming pattern tassel-1.png, etc.
+  };
+
+  // Calculate tassel position (adjust these values based on your design)
+  const tasselPosition = {
+    x: 0,       // Horizontal adjustment
+    y: 120,     // Vertical position from chain end
+    rotation: 0 // Rotation adjustment
   };
 
   const getHalfBraceletClipPath = (type) => {
@@ -51,11 +64,12 @@ const BraceletPreview = ({
       case 'plain': return '/clasp/plain.png';
       case 'regular': return '/clasp/regular.png';
       case 'tail': return '/clasp/tail.png';
+      case 'elephant': return '/clasp/elephant.png';
       default: return null; // default clasp
     }
   };
 
-  const getCharmIcon = (type, variant) => {
+  const getCharmIcon = (type, variant, rotation) => {
     if (!type) return null;
   
     // Find the charm type in CHARM_TYPES
@@ -76,14 +90,17 @@ const BraceletPreview = ({
         width={48}
         height={48}
         className="object-contain charm-image"
+        style={{transform:`rotate(${rotation+5}deg)`}}
       />
     );
   };
 
+  
+
   const allPositions = Array.from({ length: 14 }, (_, i) => {
 
     if (stringType=== 'with-clasp' && (i === 7 || i === 6)) return null;
-    const startAngle = (2.88 * Math.PI) / 2;
+    const startAngle = (2.86 * Math.PI) / 2;
     const angle = startAngle + (i / 14) * 2 * Math.PI;
     const radius = 143;
     const charmAngle = (angle + Math.PI / 2) * (180 / Math.PI) + 78;
@@ -96,6 +113,11 @@ const BraceletPreview = ({
     };
   }).filter(Boolean);
 
+  const getWidth = (claspType) => {
+    if (claspType === 'elephant') return 75;
+    return 50;
+  };
+
   const handlePositionClick = (position) => {
     if (!selectedCharm) return;
     if (selectedHalfBracelet && position >= 7) return;
@@ -103,7 +125,7 @@ const BraceletPreview = ({
   };
 
   return (
-    <div className="relative flex justify-center items-center">
+    <div className="relative flex justify-center items-center select-none">
       <div className="flex relative w-[700px] h-[700px] justify-center items-center">
         {/* Base String */}
         <div className='absolute top-[190px] left-[198px]'>
@@ -119,14 +141,56 @@ const BraceletPreview = ({
           />
         </div>
 
+        {/* Tassel Chain - Only shown when with-clasp is selected */}
+        {stringType === 'with-clasp' && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-[-115px] -translate-y-[-87px] z-5">
+            <Image
+              src="/tasselChain.png"  // Your single tassel chain image
+              alt="Tassel Chain"
+              width={25}  // Adjust to match your image dimensions
+              height={20} // Adjust to match your image dimensions
+              className="object-contain"
+              style={{
+                transform: 'rotate(-15deg)',
+              }}
+            />
+          </div>
+        )}
+
+        {/* Tassel Position */}
+        {/* Tassel Position - Only shown when with-clasp is selected */}
+        {stringType === 'with-clasp' && (
+          <div className={`
+            absolute bottom-[90px] left-[500px] transform -translate-x-1/2
+            ${step === 4 && !selectedTassel ? 'w-7 h-7 rounded-full border-2 border-red-500 ring-4 ring-red-200 animate-pulse' : ''}
+            flex items-center justify-center
+          `}>
+            {/* Show either the tassel image or nothing */}
+            {selectedTassel ? (
+              <Image
+                src={`/tassel/${selectedTassel}.png`}
+                alt={`Tassel ${selectedTassel}`}
+                width={30}
+                height={60}
+                rotate= {selectedTassel === 'locket' ? 10 : 0}
+                className="object-contain"
+              />
+            ) : (
+              step === 4 && (
+                <div className="w-7 h-7 rounded-full border-2 border-red-500 ring-4 ring-red-200 animate-pulse"></div>
+              )
+            )}
+          </div>
+        )}
+
+
         {/* Clasp */}
-        {/* Clasp - Updated to show image when with-clasp is selected */}
         {stringType === 'with-clasp' && getClaspImage() && (
-        <div className="absolute top-0 left-1/2 transform translate-x-[55px] translate-y-[445px] z-10">
+        <div className={`absolute -top-5 ${(claspType === 'butterfly' || claspType === 'flower') ? "left-[330px]" : "left-1/2"} transform ${(claspType === 'butterfly' || claspType === 'flower' || claspType === 'flower2' || claspType === 'tail') ? "translate-x-[95px] translate-y-[435px]" : "translate-x-[55px] translate-y-[465px]"} z-10`}>
           <Image
             src={getClaspImage()}
             alt={claspType}
-            width={50}
+            width={getWidth(claspType)}
             height={40}
             className="object-contain"
             style={{ transform: (claspType === 'regular' || claspType === 'bird') ? 'rotate(105deg)' : 'rotate(0deg)' }}
@@ -134,12 +198,12 @@ const BraceletPreview = ({
         </div>
       )}
 
-        {/* Charm Positions */}
-        {(selectedHalfBracelet ? allPositions.slice(0, 7) : allPositions).map((slot) => {
-          const charm = placedCharms[slot.position]?.type;
-          const variant = placedCharms[slot.position]?.variant;
+    {/* Charm Positions */}
+    {(selectedHalfBracelet ? allPositions.slice(0, 7) : allPositions).map((slot) => {
+    const charm = placedCharms[slot.position]?.type;
+    const variant = placedCharms[slot.position]?.variant;
 
-          return (
+  return (
             <div
               key={slot.position}
               className={`absolute flex items-center justify-center z-10 ${
@@ -156,7 +220,7 @@ const BraceletPreview = ({
               {charm ? (
                 <div className="relative flex items-center">
                   <div style={{ transform: `rotate(${-slot.rotation}deg)` }}>
-                    {getCharmIcon(charm, variant)}
+                    {getCharmIcon(charm, variant, slot.rotation)}
                   </div>
                   {step === 2 && (
                     <button

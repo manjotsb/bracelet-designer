@@ -11,7 +11,9 @@ const CLASP_TYPES = [
   {type:'plain', name:'Plain', icon: '/clasp/plain.png' },
   {type:'regular', name:'Regular', icon: '/clasp/regular.png' },
   {type:'tail', name:'Tail', icon: '/clasp/tail.png' },
+  {type:'elephant', name:'Elephant', icon: '/clasp/elephant.png' },
 ];
+
 
 export const CHARM_TYPES = [
   { 
@@ -27,15 +29,35 @@ export const CHARM_TYPES = [
     ]
   },
   { 
-    type: 'clover', 
-    name: 'Clover', 
-    icon: '/charms/clover/clover1.png',
+    type: 'amethyst', 
+    name: 'Amethyst Series', 
+    icon: '/charms/amethyst/amethyst.png',
     variants: [
-      { id: 'clover1', name: 'Clover 1', icon: '/charms/clover/clover1.png' },
-      { id: 'clover2', name: 'Clover 2', icon: '/charms/clover/clover2.png' },
-      { id: 'clover3', name: 'Clover 3', icon: '/charms/clover/clover3.png' },
-      { id: 'clover4', name: 'Clover 4', icon: '/charms/clover/clover4.png' },
-      { id: 'clover5', name: 'Clover 5', icon: '/charms/clover/clover5.png' },
+      { id: 'amethyst', name: 'Amethyst', icon: '/charms/amethyst/amethyst.png' },
+      { id: 'circle', name: 'Circle', icon: '/charms/amethyst/circle.png' },
+      { id: 'oval', name: 'Oval', icon: '/charms/amethyst/oval.png' },
+      { id: 'oval2', name: 'Oval 2', icon: '/charms/amethyst/oval2.png' },
+    ]
+  },
+  { 
+    type: 'aqua-marine', 
+    name: 'Aqua Marine Series', 
+    icon: '/charms/aqua-marine/circle.png',
+    variants: [
+      { id: 'circle', name: 'Circle', icon: '/charms/aqua-marine/circle.png' },
+      { id: 'tower', name: 'Tower', icon: '/charms/aqua-marine/tower.png' },
+    ]
+  },
+  { 
+    type: 'blue-topaz', 
+    name: 'Blue Topaz Series', 
+    icon: '/charms/blue-topaz/bow.png',
+    variants: [
+      { id: 'bow', name: 'Bow', icon: '/charms/blue-topaz/bow.png' },
+      { id: 'circle', name: 'Circle', icon: '/charms/blue-topaz/circle.png' },
+      { id: 'circle2', name: 'Circle 2', icon: '/charms/blue-topaz/circle2.png' },
+      { id: 'clover', name: 'Clover', icon: '/charms/blue-topaz/clover.png' },
+      { id: 'oval', name: 'Oval', icon: '/charms/blue-topaz/oval.png' },
     ]
   },
   { 
@@ -64,14 +86,49 @@ export const CHARM_TYPES = [
     ]
   },
   { 
-    type: 'circle', 
-    name: 'Circle', 
-    icon: '/charms/circle/circle1.png',
+    type: 'extra', 
+    name: 'Extras', 
+    icon: '/charms/extra/amberHeart.png',
     variants: [
-      { id: 'circle1', name: 'Circle 1', icon: '/charms/circle/circle1.png' },
-      { id: 'circle2', name: 'Circle 2', icon: '/charms/circle/circle2.png' },
-      { id: 'circle3', name: 'Circle 3', icon: '/charms/circle/circle3.png' },
-      { id: 'circle4', name: 'Circle 4', icon: '/charms/circle/circle4.png' },
+      { id: 'amberHeart', name: 'Amber Heart', icon: '/charms/extra/amberHeart.png' },
+      { id: 'circle', name: 'Circle 1', icon: '/charms/extra/circle.png' },
+      { id: 'circle2', name: 'Circle 2', icon: '/charms/extra/circle2.png' },
+      { id: 'circle3', name: 'Circle 3', icon: '/charms/extra/circle3.png' },
+      { id: 'moonstoneClover', name: 'Moonstone Clover', icon: '/charms/extra/moonstoneClover.png' },
+    ]
+  },
+  { 
+    type: 'lapis-lazuli', 
+    name: 'Lapis Lazuli Series', 
+    icon: '/charms/lapis-lazuli/circle.png',
+    variants: [
+      { id: 'circle', name: 'Circle', icon: '/charms/lapis-lazuli/circle.png' },
+      { id: 'clover', name: 'Clover', icon: '/charms/lapis-lazuli/clover.png' },
+      { id: 'oval', name: 'Oval', icon: '/charms/lapis-lazuli/oval.png' },
+      { id: 'square', name: 'Square', icon: '/charms/lapis-lazuli/square.png' },
+      { id: 'tear', name: 'Tear', icon: '/charms/lapis-lazuli/tear.png' },
+    ]
+  },
+  { 
+    type: 'opal', 
+    name: 'Opal Series', 
+    icon: '/charms/opal/clover.png',
+    variants: [
+      { id: 'clover', name: 'Clover', icon: '/charms/opal/clover.png' },
+      { id: 'oval', name: 'Oval', icon: '/charms/opal/oval.png' },
+      { id: 'star', name: 'Star', icon: '/charms/opal/star.png' },
+    ]
+  },
+  { 
+    type: 'pink', 
+    name: 'Pink Series', 
+    icon: '/charms/pink/clover.png',
+    variants: [
+      { id: 'clover', name: 'Clover', icon: '/charms/pink/clover.png' },
+      { id: 'oval', name: 'Oval', icon: '/charms/pink/oval.png' },
+      { id: 'flower', name: 'Flower', icon: '/charms/pink/flower.png' },
+      { id: 'heartCrown', name: 'Heart Crown', icon: '/charms/pink/heartCrown.png' },
+      { id: 'doubleHeart', name: 'Double Heart', icon: '/charms/pink/doubleHeart.png' },
     ]
   },
   { 
@@ -91,6 +148,9 @@ export const CHARM_TYPES = [
 const ComponentSelector = ({
   step,
   setStep,
+  selectedTassel,
+  tasselOptions,
+  setSelectedTassel,
   stringType,
   setStringType,
   claspType,
@@ -103,15 +163,8 @@ const ComponentSelector = ({
   charmVariants,
   handleVariantSelect,
 }) => {
-  const handleNext = () => step < 4 && setStep(step + 1);
+  const handleNext = () => step < 5 && setStep(step + 1);
   const handlePrevious = () => step > 1 && setStep(step - 1);
-
-  const stepNames = {
-    1: "String & Clasp",
-    2: "Charms",
-    3: "Half Bracelet",
-    4: "Review"
-  };
 
   const getCharmImage = (charm) => {
     const variant = charmVariants[charm.type];
@@ -137,7 +190,7 @@ const ComponentSelector = ({
           
           <div className="mt-4">
             <h3 className="font-medium mb-2">Clasp Style</h3>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid h-[210px] overflow-auto grid-cols-4 gap-4 ">
               {CLASP_TYPES.map((clasp) => (
                 <button
                   key={clasp.type}
@@ -167,7 +220,7 @@ const ComponentSelector = ({
       {step === 2 && (
         <div>
           <h3 className="font-medium mb-4">Add Charms</h3>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid h-[220px] overflow-auto grid-cols-4 gap-4">
             {CHARM_TYPES.map((charm) => (
               <div key={charm.type} className="flex flex-col items-center">
                 <button
@@ -192,7 +245,7 @@ const ComponentSelector = ({
           {/* Variant Selection */}
           {selectedCharm && (
             <>
-              <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+              <div className="mt-4 p-4 bg-gray-50 rounded-xl">
                 <h4 className="font-medium mb-3 text-gray-700">
                   {CHARM_TYPES.find(c => c.type === selectedCharm)?.name} Variants
                 </h4>
@@ -216,17 +269,11 @@ const ComponentSelector = ({
                             className="object-contain"
                           />
                         </div>
+                        <p>${1}</p>
                       </button>
                     ))}
                 </div>
               </div>
-              
-              {/* <button 
-                onClick={() => setSelectedCharm(null)}
-                className="mt-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Clear Selected Charm
-              </button> */}
             </>
           )}
         </div>
@@ -256,20 +303,55 @@ const ComponentSelector = ({
                   </div>
                 </button>
                 <span className="text-sm mt-2 text-center">{option.name}</span>
+                <span className="text-sm mt-2 text-center">${option.price}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Step 4: Review */}
+      {/* Step 4: Select Tassel */}
       {step === 4 && (
         <div>
-          <h3 className="font-medium mb-4">Review Your Bracelet</h3>
-          {/* Add your review content here */}
+          <h3 className="font-medium mb-4">Select Tassel</h3>
+          {stringType !== 'with-clasp' ? (
+            <p className="text-gray-500">Tassels are only available with clasp bracelets.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {tasselOptions.map((tassel) => (
+                <button
+                  key={tassel.id}
+                  onClick={() => setSelectedTassel(tassel.id)}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center transition-all ${
+                    selectedTassel === tassel.id
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="w-12 h-12 relative">
+                    <Image
+                      width={30}
+                      height={30}
+                      src={tassel.image}
+                      alt={tassel.name}
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="mt-2 text-sm">{tassel.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
+      {/* Step 5: Review (unchanged) */}
+      {step === 5 && (
+        <div>
+          <h3 className="font-medium mb-4">Review Your Bracelet</h3>
+          {/* ... review content ... */}
+        </div>
+      )}
       {/* Navigation Buttons */}
       <div className="flex justify-between mt-8">
         <button
@@ -281,18 +363,18 @@ const ComponentSelector = ({
               : 'text-black hover:text-white hover:bg-black border-2'
           }`}
         >
-          {step > 1 ? `Previous: ${stepNames[step - 1]}` : "Previous"}
+          {step > 1 ? `Previous ` : "Previous"}
         </button>
         
         <button
           onClick={() => {handleNext(); setSelectedCharm(null);}}
           className={`px-5 py-2 text-white font-semibold tracking-wide text-lg transition-colors ${
-            step === 4 
+            step === 5 
               ? 'bg-green-500 hover:bg-green-600' 
               : 'bg-black hover:text-black hover:bg-white border-2'
           }`}
         >
-          {step < 4 ? `Next: ${stepNames[step + 1]}` : 'Complete Order'}
+          {step < 5 ? `Next` : 'Complete Order'}
         </button>
       </div>
     </div>
