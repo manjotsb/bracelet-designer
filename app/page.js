@@ -1,15 +1,16 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import BraceletPreview from './BraceletPreview/page';
 import ComponentSelector from './ComponentSelector/page';
+import { CHARM_TYPES } from './ComponentSelector/page';
 
 const HALF_BRACELET_OPTIONS = [
-  { id: 'none', name: 'None', image: '/half-bracelets/none.png', price:0 },
-  { id: 'pearls', name: 'Pearls', image: '/half-bracelets/pearls.png', price:50  },
-  { id: 'amethyst', name: 'Amethyst', image: '/half-bracelets/amethyst.png', price:66  },
-  { id: 'beads', name: 'Beads', image: '/half-bracelets/beads.png', price:21  },
-  { id: 'knotted', name: 'Knotted', image: '/half-bracelets/knotted.png', price:5  },
-  { id: 'chain', name: 'Chain', image: '/half-bracelets/chain.png', price:10  },
+  { id: 'none', name: 'None', image: '/half-bracelets/none.png', price: 0 },
+  { id: 'pearls', name: 'Pearls', image: '/half-bracelets/pearls.png', price: 50 },
+  { id: 'amethyst', name: 'Amethyst', image: '/half-bracelets/amethyst.png', price: 66 },
+  { id: 'beads', name: 'Beads', image: '/half-bracelets/beads.png', price: 21 },
+  { id: 'knotted', name: 'Knotted', image: '/half-bracelets/knotted.png', price: 5 },
+  { id: 'chain', name: 'Chain', image: '/half-bracelets/chain.png', price: 10 },
 ];
 
 const FILLER_OPTIONS = [
@@ -27,7 +28,8 @@ const BraceletDesigner = () => {
     5: "Review"
   };
   
-  const [stringType, setStringType] = useState('silver');
+  const [stringType, setStringType] = useState('blue-with-clasp');
+  const [selectedColor, setSelectedColor] = useState('blue');
   const [claspType, setClaspType] = useState('default');
   const [chainLength, setChainLength] = useState(3);
   const [endCharm, setEndCharm] = useState('heart');
@@ -38,16 +40,48 @@ const BraceletDesigner = () => {
   const [selectedHalfBracelet, setSelectedHalfBracelet] = useState(null);
   const [charmVariants, setCharmVariants] = useState({ circle: 'circle1' });
   const [selectedFiller, setSelectedFiller] = useState('filler1');
+  const [selectedTassel, setSelectedTassel] = useState(null);
 
-  const [selectedTassel, setSelectedTassel] = useState(null); // 1-4 or null
-
-  // Add tassel selector UI somewhere in your component
   const TASSEL_OPTIONS = [
     { id: 'heart', name: 'Heart Tassel', image: '/tassel/heart.png' },
     { id: 'locket', name: 'Locket Tassel', image: '/tassel/locket.png' },
     { id: 'pearl', name: 'Pearl Tassel', image: '/tassel/pearl.png' },
     { id: 'plain', name: 'Plain Tassel', image: '/tassel/plain.png' },
   ];
+
+  // Calculate total price
+  const totalPrice = useMemo(() => {
+    let price = 60; // Base price
+
+    // Add half-bracelet price
+    if (selectedHalfBracelet) {
+      const halfBracelet = HALF_BRACELET_OPTIONS.find(option => option.id === selectedHalfBracelet);
+      if (halfBracelet) {
+        price += halfBracelet.price;
+      }
+    }
+
+    // Add placed charms prices
+    placedCharms.forEach(charm => {
+      if (charm.type && charm.variant) {
+        const charmType = CHARM_TYPES.find(c => c.type === charm.type);
+        if (charmType) {
+          const variant = charmType.variants.find(v => v.id === charm.variant);
+          if (variant) {
+            price += variant.price;
+          }
+        }
+      }
+    });
+
+    return price;
+  }, [selectedHalfBracelet, placedCharms]);
+
+  const handleStringSelect = (stringId) => {
+    setStringType(stringId);
+    setSelectedColor(stringId.split('-')[0]);
+    if (stringId.endsWith('no-clasp')) setClaspType(null);
+  };
 
   const handleVariantSelect = (charmType, variant) => {
     setCharmVariants((prev) => ({
@@ -71,12 +105,11 @@ const BraceletDesigner = () => {
 
   const toggleHalfBracelet = (type) => {
     if (type === 'none') {
-      setSelectedHalfBracelet(null); // Clear selection
+      setSelectedHalfBracelet(null);
     } else if (selectedHalfBracelet === type) {
-      setSelectedHalfBracelet(null); // Toggle off
+      setSelectedHalfBracelet(null);
     } else {
-      setSelectedHalfBracelet(type); // Select new type
-      // Clear charms from positions 7 and beyond
+      setSelectedHalfBracelet(type);
       setPlacedCharms(prev => {
         const newPlacedCharms = [...prev];
         for (let i = 7; i < newPlacedCharms.length; i++) {
@@ -85,14 +118,6 @@ const BraceletDesigner = () => {
         return newPlacedCharms;
       });
     }
-  };
-
-  const handleNextStep = () => {
-    if (step < 4) setStep(step + 1);
-  };
-
-  const handlePrevStep = () => {
-    if (step > 1) setStep(step - 1);
   };
 
   const removeCharm = (position) => {
@@ -124,18 +149,18 @@ const BraceletDesigner = () => {
           />
         </div>
         <div className="md:w-1/2 p-8 mt-10">
-        <div className='flex items-center justify-between'>
-          <h2 className="text-5xl font-serif mb-2">Customize</h2>
-          <h2 className="text-xl font-serif mb-2">Total Price: ${60}</h2>
-        </div>
+          <div className='flex items-center justify-between'>
+            <h2 className="text-5xl font-serif mb-2">Customize</h2>
+            <h2 className="text-xl font-serif mb-2">Total Price: ${totalPrice.toFixed(2)}</h2>
+          </div>
           <p className="text-lg mb-6">
-            Step {step}: {step === 1 ? 'Choose your string and clasp' : step === 2 ? 'Add charms' : step === 3 ? 'Select half bracelet' : 'Confirm & Checkout'}
+            Step {step}: {step === 1 ? 'Choose your string and clasp' : step === 2 ? 'Add charms' : step === 3 ? 'Select half bracelet' : step === 4 ? 'Select tassel' : 'Confirm & Checkout'}
           </p>
           <ComponentSelector
             step={step}
             setStep={setStep}
             stringType={stringType}
-            setStringType={setStringType}
+            setStringType={handleStringSelect}
             claspType={claspType}
             setClaspType={setClaspType}
             chainLength={chainLength}
@@ -153,6 +178,8 @@ const BraceletDesigner = () => {
             selectedTassel={selectedTassel}
             setSelectedTassel={setSelectedTassel}
             tasselOptions={TASSEL_OPTIONS}
+            placedCharms={placedCharms}
+            selectedColor={selectedColor}
           />
         </div>
       </div>
